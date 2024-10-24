@@ -31,7 +31,7 @@ class TaskListScreen extends StatelessWidget {
           ),
         ),
         body: BlocProvider(
-          create: (context) => TaskBloc(FirebaseTaskRepository(), userId)..add(LoadTasks()), 
+          create: (context) => TaskBloc(FirebaseTaskRepository(), userId)..add(LoadTasks()),
           child: BlocBuilder<TaskBloc, TaskState>(
             builder: (context, state) {
               if (state is TaskLoadInProgress) {
@@ -61,7 +61,8 @@ class TaskListScreen extends StatelessWidget {
             );
 
             if (result == true) {
-              BlocProvider.of<TaskBloc>(context).add(LoadTasks()); 
+              BlocProvider.of<TaskBloc>(context).add(LoadTasks());
+              Navigator.pop(context, true);
             }
           },
           backgroundColor: Colors.teal,
@@ -102,7 +103,7 @@ class TaskListScreen extends StatelessWidget {
               );
 
               if (result == true) {
-                BlocProvider.of<TaskBloc>(context).add(LoadTasks()); 
+                BlocProvider.of<TaskBloc>(context).add(LoadTasks());
               }
             },
           ),
@@ -117,7 +118,7 @@ class TaskListScreen extends StatelessWidget {
       onChanged: (bool? value) {
         BlocProvider.of<TaskBloc>(context).add(UpdateTask(task.copyWith(isCompleted: value ?? false)));
       },
-      activeColor: Colors.teal, 
+      activeColor: Colors.teal,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5),
       ),

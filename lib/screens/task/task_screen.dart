@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_list/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:my_list/blocs/task_bloc/task_bloc.dart';
-import 'package:my_list/screens/task/task_list.dart';
 import 'package:task_repository/task_repository.dart';
 
 class TaskScreen extends StatelessWidget {
   final TextEditingController _controllerTitle = TextEditingController();
   final TextEditingController _controllerDescription = TextEditingController();
 
-  TaskScreen({Key? key}) : super(key: key);
+  TaskScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +46,7 @@ class TaskScreen extends StatelessWidget {
 
                 if (newTask.title.isNotEmpty) {
                   BlocProvider.of<TaskBloc>(context).add(AddTask(newTask));
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => TaskListScreen()),
+                  Navigator.pop(context
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
