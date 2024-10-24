@@ -36,7 +36,7 @@ class _SignInPageState extends State<SignInPage> {
         );
         } else if (state is SignInFailure) {
           setState(() {
-            _errorMsg = 'Nome ou senha inválidos';
+            _errorMsg = 'Name or Password invalid';
           });
         }
       },
@@ -76,7 +76,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       const SizedBox(height: 20),
                       const Text(
-                        "Entrar",
+                        "Sign In",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,
@@ -106,7 +106,7 @@ class _SignInPageState extends State<SignInPage> {
                             _buildTextField(
                               context,
                               controller: passwordController,
-                              hintText: 'Senha',
+                              hintText: 'Password',
                               icon: Icons.lock,
                               obscureText: obscurePassword,
                               validator: (val) {
@@ -127,7 +127,7 @@ class _SignInPageState extends State<SignInPage> {
                                 },
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 30),
                             BlocBuilder<SignInBloc, SignInState>(
                               builder: (context, state) {
                                 if (state is SignInProcess) {
@@ -137,7 +137,7 @@ class _SignInPageState extends State<SignInPage> {
                                 }
                                 return _buildActionButton(
                                   context,
-                                  label: "Sign In",
+                                  label: "Enter",
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
                                       context.read<SignInBloc>().add(SignInRequired(
@@ -149,7 +149,7 @@ class _SignInPageState extends State<SignInPage> {
                                 );
                               },
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 20),
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -160,7 +160,7 @@ class _SignInPageState extends State<SignInPage> {
                                 );
                               },
                               child: const Text(
-                                'Esqueceu a senha?',
+                                'Forgot Passowrd?',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,

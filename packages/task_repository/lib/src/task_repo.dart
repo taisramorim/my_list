@@ -2,7 +2,7 @@ import 'package:task_repository/task_repository.dart';
 
 abstract class TaskRepository {
 
-  Stream<List<Task>> getTasks();
+  Stream<List<Task>> getTasks(String userId);
 
   Future<void> addTask(Task task);
 

@@ -1,4 +1,4 @@
-import 'package:my_list/services/api_repository.dart';
+import 'package:my_list/services/motivational_repository.dart';
 
 class ApiService {
   final MotivationalQuoteRepository _quoteRepository = MotivationalQuoteRepository();

@@ -3,12 +3,14 @@ class TaskEntity{
   final String title;
   final String description;
   final bool isCompleted;
+  final String userId;
 
   TaskEntity({
     required this.id,
     required this.title,
     required this.description,
     this.isCompleted = false,
+    required this.userId
   });
 
   Map<String, dynamic> toDocument(){
@@ -16,6 +18,7 @@ class TaskEntity{
       'title': title,
       'description': description,
       'isCompleted': isCompleted,
+      'userId': userId
     };
   }
 
@@ -25,6 +28,7 @@ class TaskEntity{
       title: doc['title'],
       description: doc['description'],
       isCompleted: doc['isCompleted'] ?? false,
+      userId: doc['userId']
     );
   }
 
@@ -35,6 +39,7 @@ class TaskEntity{
       title: $title
       description: $description
       isCompleted: $isCompleted
+      userId: $userId
     }''';
   }
 }

@@ -4,17 +4,20 @@ import 'package:my_list/blocs/task_bloc/task_bloc.dart';
 import 'package:my_list/screens/task/task_details.dart';
 import 'package:my_list/screens/task/task_screen.dart';
 import 'package:task_repository/task_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TaskListScreen extends StatelessWidget {
   const TaskListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    String userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+
     return DefaultTabController(
-      length: 2, 
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Minhas Tarefas', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          title: Text('My Tasks', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
           backgroundColor: Colors.teal,
           foregroundColor: Colors.white,
           bottom: TabBar(
@@ -22,13 +25,13 @@ class TaskListScreen extends StatelessWidget {
             unselectedLabelColor: Colors.black,
             labelColor: Colors.white,
             tabs: [
-              Tab(text: 'Não Concluídas'),
-              Tab(text: 'Concluídas'),
+              Tab(text: 'To Do'),
+              Tab(text: 'Done'),
             ],
           ),
         ),
         body: BlocProvider(
-          create: (context) => TaskBloc(FirebaseTaskRepository())..add(LoadTasks()),
+          create: (context) => TaskBloc(FirebaseTaskRepository(), userId)..add(LoadTasks()), 
           child: BlocBuilder<TaskBloc, TaskState>(
             builder: (context, state) {
               if (state is TaskLoadInProgress) {
@@ -45,14 +48,21 @@ class TaskListScreen extends StatelessWidget {
                   ],
                 );
               } else {
-                return Center(child: Text('Erro ao carregar tarefas.'));
+                return Center(child: Text('Erro ao carregar as tarefas.'));
               }
             },
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => TaskScreen()));
+          onPressed: () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TaskScreen()),
+            );
+
+            if (result == true) {
+              BlocProvider.of<TaskBloc>(context).add(LoadTasks()); 
+            }
           },
           backgroundColor: Colors.teal,
           child: Icon(Icons.add, color: Colors.white),
@@ -71,22 +81,29 @@ class TaskListScreen extends StatelessWidget {
           elevation: 4,
           margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: ListTile(
-            contentPadding: EdgeInsets.all(16), 
-            leading: _buildRoundCheckbox(task, context), 
+            contentPadding: EdgeInsets.all(16),
+            leading: _buildRoundCheckbox(task, context),
             title: Text(
               task.title,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              overflow: TextOverflow.ellipsis, 
+              overflow: TextOverflow.ellipsis,
             ),
             subtitle: Text(
               task.description,
               style: TextStyle(color: Colors.grey[600]),
               overflow: TextOverflow.ellipsis,
-              maxLines: 1, 
+              maxLines: 1,
             ),
-            trailing: Icon(Icons.chevron_right, color: Colors.teal), 
-            onTap: () {
-               Navigator.push(context, MaterialPageRoute(builder: (context) => TaskDetailScreen(task: task,)));
+            trailing: Icon(Icons.chevron_right, color: Colors.teal),
+            onTap: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => TaskDetailScreen(task: task)),
+              );
+
+              if (result == true) {
+                BlocProvider.of<TaskBloc>(context).add(LoadTasks()); 
+              }
             },
           ),
         );
@@ -96,13 +113,14 @@ class TaskListScreen extends StatelessWidget {
 
   Widget _buildRoundCheckbox(Task task, BuildContext context) {
     return Checkbox(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       value: task.isCompleted,
-      onChanged: (value) {
-        BlocProvider.of<TaskBloc>(context).add(UpdateTask(task.copyWith(isCompleted: value)));
+      onChanged: (bool? value) {
+        BlocProvider.of<TaskBloc>(context).add(UpdateTask(task.copyWith(isCompleted: value ?? false)));
       },
-      activeColor: Colors.teal,
-      checkColor: Colors.white,
+      activeColor: Colors.teal, 
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
     );
   }
 }

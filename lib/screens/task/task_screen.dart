@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_list/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:my_list/blocs/task_bloc/task_bloc.dart';
-import 'package:my_list/screens/home/home_screen.dart';
+import 'package:my_list/screens/task/task_list.dart';
 import 'package:task_repository/task_repository.dart';
 
 class TaskScreen extends StatelessWidget {
@@ -12,9 +13,14 @@ class TaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userId = context.read<AuthenticationBloc>().state.user?.uid ?? ''; 
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Adicionar Tarefa', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        title: Text(
+          'Add Task',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.teal,
@@ -25,14 +31,10 @@ class TaskScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'Crie uma nova tarefa',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.teal),
-            ),
             SizedBox(height: 20),
-            _buildTextField(_controllerTitle, 'Título da Tarefa'),
+            _buildTextField(_controllerTitle, 'Title'),
             SizedBox(height: 16),
-            _buildTextField(_controllerDescription, 'Descrição da Tarefa', maxLines: 5),
+            _buildTextField(_controllerDescription, 'Description', maxLines: 5),
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
@@ -40,21 +42,25 @@ class TaskScreen extends StatelessWidget {
                   id: '', 
                   title: _controllerTitle.text,
                   description: _controllerDescription.text,
+                  userId: userId, 
                 );
 
                 if (newTask.title.isNotEmpty) {
                   BlocProvider.of<TaskBloc>(context).add(AddTask(newTask));
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => TaskListScreen()),
+                  );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Tarefa adicionada com sucesso!'),
+                      content: Text('Task added successfully!'),
                       duration: Duration(seconds: 2),
                     ),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Por favor, insira um título.'),
+                      content: Text('Please insert a title.'),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -68,7 +74,7 @@ class TaskScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
-              child: Text('Criar Tarefa', style: TextStyle(color: Colors.white, fontSize: 16),),
+              child: Text('Add task', style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
           ],
         ),

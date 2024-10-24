@@ -10,7 +10,6 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  late String backgroundImage;
 
   @override
   void initState() {
@@ -37,9 +36,9 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+              padding: EdgeInsets.all(MediaQuery.of(context).size.height * 0.05),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -59,7 +58,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       SizedBox(height: 200),
                       _buildActionButton(
                         context,
-                        label: 'Entrar',
+                        label: 'Sign In',
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -70,7 +69,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       const SizedBox(height: 20),
                       _buildActionButton(
                         context,
-                        label: 'Cadastre-se',
+                        label: 'Register',
                         onPressed: () {
                           Navigator.push(
                             context,

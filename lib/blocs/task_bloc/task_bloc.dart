@@ -6,12 +6,13 @@ part 'task_state.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final TaskRepository taskRepository;
+  final String userId;  
 
-  TaskBloc(this.taskRepository) : super(TaskLoadInProgress()) {
+  TaskBloc(this.taskRepository, this.userId) : super(TaskLoadInProgress()) {
     on<LoadTasks>((event, emit) async {
       emit(TaskLoadInProgress());
       try {
-        final tasks = await taskRepository.getTasks().first; 
+        final tasks = await taskRepository.getTasks(userId).first; // Passa o userId para buscar tarefas
         emit(TaskLoadSuccess(tasks));
       } catch (e) {
         emit(TaskLoadFailure(e.toString()));
@@ -30,7 +31,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<UpdateTask>((event, emit) async {
       try {
         await taskRepository.updateTask(event.task);
-        add(LoadTasks()); 
+        final tasks = await taskRepository.getTasks(userId).first;         
+        emit(TaskLoadSuccess(tasks)); 
       } catch (e) {
         emit(TaskLoadFailure(e.toString()));
       }

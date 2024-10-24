@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart'; 
+import 'package:cloud_firestore/cloud_firestore.dart'; 
+import 'package:firebase_auth/firebase_auth.dart'; 
 import 'package:my_list/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:my_list/blocs/task_bloc/task_bloc.dart';
 import 'package:my_list/screens/authentication/welcome_page.dart';
@@ -15,25 +18,49 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _motivationalQuote = 'Carregando...';
+  String _motivationalQuote = 'Loading...';
+  String _userName = ''; 
+  String _userId = ''; 
 
   @override
   void initState() {
     super.initState();
-    _loadQuote();
+    _loadData();
   }
 
-  Future<void> _loadQuote() async {
+  Future<void> _loadData() async {
     try {
-      final quote = await MotivationalQuoteRepository().fetchQuote();
+      final results = await Future.wait([
+        _fetchUserName(),
+        MotivationalQuoteRepository().fetchQuote(),
+      ]);
+
       setState(() {
-        _motivationalQuote = quote;
+        _userName = results[0]; 
+        _motivationalQuote = results[1]; 
       });
     } catch (e) {
       setState(() {
-        _motivationalQuote = 'Erro ao carregar frase: $e';
+        _motivationalQuote = 'Erro: $e';
       });
     }
+  }
+
+  Future<String> _fetchUserName() async {
+    User? user = FirebaseAuth.instance.currentUser; 
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      _userId = user.uid; 
+      return userDoc['name'] ?? 'User'; 
+    }
+    return 'User';
+  }
+
+  void _refreshQuote() {
+    setState(() {
+      _motivationalQuote = 'Loading...';
+    });
+    _loadData(); 
   }
 
   @override
@@ -54,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: BlocProvider(
-        create: (context) => TaskBloc(FirebaseTaskRepository())..add(LoadTasks()),
+        create: (context) => TaskBloc(FirebaseTaskRepository(), _userId)..add(LoadTasks()), 
         child: BlocBuilder<TaskBloc, TaskState>(
           builder: (context, state) {
             if (state is TaskLoadInProgress) {
@@ -69,44 +96,64 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.teal.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                    Center(
                       child: Text(
-                        _motivationalQuote,
+                        DateFormat('EEEE, d MMMM').format(DateTime.now()),
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.teal),
-                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '👋 Hello, $_userName!',
+                                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.teal),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              _motivationalQuote,
+                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.teal),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 20),
-                    Center(
-                      child: Text.rich(
-                        TextSpan(
-                          style: TextStyle(fontSize: 14),
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
                           children: [
-                            TextSpan(
-                              text: 'You have ',
-                              style: TextStyle(fontWeight: FontWeight.normal),
+                            Text(
+                              '📝 Your Task Status',
+                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.teal),
                             ),
-                            TextSpan(
-                              text: '$pendingTasks',
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.teal,fontSize: 18),
+                            SizedBox(height: 10),
+                            Text(
+                              'You have:',
+                              style: TextStyle(fontSize: 16),
                             ),
-                            TextSpan(
-                              text: ' pending tasks and ',
-                              style: TextStyle(fontWeight: FontWeight.normal),
+                            SizedBox(height: 10),
+                            Text(
+                              '$pendingTasks Pending Tasks',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange),
                             ),
-                            TextSpan(
-                              text: '$completedTasks',
-                              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.teal,fontSize: 18),
-                            ),
-                            TextSpan(
-                              text: ' completed tasks.',
-                              style: TextStyle(fontWeight: FontWeight.normal),
+                            Text(
+                              '$completedTasks Completed Tasks',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
                             ),
                           ],
                         ),
@@ -124,13 +171,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      child: Text('Ver Lista de Tarefas', style: TextStyle(color: Colors.white, fontSize: 16)),
+                      child: Text('See Your Tasks', style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
                   ],
                 ),
               );
             } else {
-              return Center(child: Text('Erro ao carregar tarefas.'));
+              return Center(child: Text('Erro ao carregar as tarefas.'));
             }
           },
         ),
@@ -138,4 +185,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

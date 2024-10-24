@@ -20,8 +20,12 @@ class FirebaseTaskRepository implements TaskRepository {
   }
 
   @override
-  Stream<List<Task>> getTasks() {
-    return _firestore.collection('tasks').snapshots().map((snapshot) {
+  Stream<List<Task>> getTasks(String userId) {
+    return _firestore
+        .collection('tasks')
+        .where('userId', isEqualTo: userId)
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs.map((doc) {
         return TaskEntity.fromDocument(doc.id, doc.data()).toTask(); 
       }).toList();
@@ -36,6 +40,7 @@ extension TaskEntityX on TaskEntity {
       title: title,
       description: description,
       isCompleted: isCompleted,
+      userId: userId
     );
   }
 }
