@@ -11,3 +11,4 @@ Aqui estão algumas capturas de tela do meu projeto:
 <img src="https://github.com/user-attachments/assets/d5f172e4-3d18-457b-851f-ca61e96d6c8a" width="300" />
 <img src="https://github.com/user-attachments/assets/7be4b669-41e1-4475-b2c0-eb44e22fe75f" width="300" />
 <img src="https://github.com/user-attachments/assets/144672b2-45be-4ec9-997a-4e5beb78f50b" width="300" />
+<img src="https://github.com/user-attachments/assets/beffdd47-d85f-4070-80f2-1bd13917a83d" width="300" />
