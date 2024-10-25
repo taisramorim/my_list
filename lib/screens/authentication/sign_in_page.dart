@@ -36,7 +36,7 @@ class _SignInPageState extends State<SignInPage> {
         );
         } else if (state is SignInFailure) {
           setState(() {
-            _errorMsg = 'Name or Password invalid';
+            _errorMsg = 'Nome ou senha inválidos';
           });
         }
       },
@@ -76,7 +76,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                       const SizedBox(height: 20),
                       const Text(
-                        "Sign In",
+                        "Login",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,
@@ -106,7 +106,7 @@ class _SignInPageState extends State<SignInPage> {
                             _buildTextField(
                               context,
                               controller: passwordController,
-                              hintText: 'Password',
+                              hintText: 'Senha',
                               icon: Icons.lock,
                               obscureText: obscurePassword,
                               validator: (val) {
@@ -137,7 +137,7 @@ class _SignInPageState extends State<SignInPage> {
                                 }
                                 return _buildActionButton(
                                   context,
-                                  label: "Enter",
+                                  label: "Entrar",
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
                                       context.read<SignInBloc>().add(SignInRequired(
@@ -160,7 +160,7 @@ class _SignInPageState extends State<SignInPage> {
                                 );
                               },
                               child: const Text(
-                                'Forgot Passowrd?',
+                                'Esqueceu a senha?',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,

@@ -78,7 +78,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       const SizedBox(height: 20),
                       const Text(
-                        "Register",
+                        "Cadastrar",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 28,
@@ -93,11 +93,11 @@ class _SignUpPageState extends State<SignUpPage> {
                             _buildTextField(
                               context,
                               controller: nameController,
-                              hintText: 'Name',
+                              hintText: 'Nome',
                               icon: Icons.person,
                               validator: (val) {
                                 if (val == null || val.isEmpty) {
-                                  return 'Please fill this up.';
+                                  return 'Por favor, preencha este campo';
                                 }
                                 return null;
                               },
@@ -111,9 +111,9 @@ class _SignUpPageState extends State<SignUpPage> {
                               keyboardType: TextInputType.emailAddress,
                               validator: (val) {
                                 if (val == null || val.isEmpty) {
-                                  return 'Please fill this up.';
+                                  return 'Por favor, preencha este campo';
                                 } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(val)) {
-                                  return 'Please fill a valid email';
+                                  return 'Por favor, insira um email válido';
                                 }
                                 return null;
                               },
@@ -122,7 +122,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             _buildTextField(
                               context,
                               controller: passwordController,
-                              hintText: 'Password',
+                              hintText: 'Senha',
                               icon: Icons.lock,
                               obscureText: obscurePassword,
                               validator: (val) {
@@ -149,7 +149,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             _buildTextField(
                               context,
                               controller: confirmpasswordController,
-                              hintText: 'Confirm password',
+                              hintText: 'Confirmar senha',
                               icon: Icons.lock,
                               obscureText: obscureConfirmPassword,
                               validator: (val) {
@@ -183,7 +183,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                                 return _buildActionButton(
                                   context,
-                                  label: "Create account",
+                                  label: "Criar conta",
                                   onPressed: () {
                                     if (_formKey.currentState!.validate()) {
                                       MyUser myUser = MyUser.empty.copyWith(

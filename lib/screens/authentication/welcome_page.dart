@@ -58,7 +58,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       SizedBox(height: 200),
                       _buildActionButton(
                         context,
-                        label: 'Sign In',
+                        label: 'Entrar',
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -69,7 +69,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       const SizedBox(height: 20),
                       _buildActionButton(
                         context,
-                        label: 'Register',
+                        label: 'Cadastrar',
                         onPressed: () {
                           Navigator.push(
                             context,
